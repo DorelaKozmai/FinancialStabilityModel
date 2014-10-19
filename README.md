@@ -9,7 +9,7 @@
 ## General Introduction
 
 The global financial crisis of 2007-2008 has exposed major weaknesses in a financial supervision approach that is predominantely confined to microprudential regulation, which focuses mainly on the capital adequacy of individual insitutions while missing a large part of the picture by ignoring the interconnectedness of institutions in the financial system. The consensus among policymakers and regulators, most notably expressed at the Seoul meeting of the G20 in November 2010, has therefore been that further work on the improvement of macroprudential supervision frameworks is required. 
-In reaction to the G20’s call for better techniques to identify and model systemic risk, team SHOCKERS aims to (i) model a highly interconnected banking system with heterogenous agents and (ii) shocking individual agent’s assets and (iii) defining and observing different resilience parameters in the simulation results.
+In reaction to the G20’s call for better techniques to identify and model systemic risk, team SHOCKSTERS aims to (i) model a highly interconnected banking system with heterogenous agents and (ii) shocking individual agent’s assets and (iii) defining and observing different resilience parameters in the simulation results.
 
 ## The Model
 
