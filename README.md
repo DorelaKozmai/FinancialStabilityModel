@@ -1,5 +1,5 @@
-# MATLAB Fall 2014 – Research Plan (Template)
-(text between brackets to be removed)
+# MATLAB Fall 2014 – Research Plan SHOCKSTERS
+
 
 > * Group Name: SHOCKSTERS
 > * Group participants names:  A. Bargerbos, D. Kozmai, E. Elsner
