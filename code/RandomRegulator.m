@@ -3,32 +3,33 @@
 % matrix B, assets per bank a, interbank borrowing minus lending e,
 % interbank lending i, interbank borrowing b, weights w, consumer deposits
 % d, net worth per bank c.
-function[B,a,e,i,c,d,b,wreal,regulator] = DumbRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)
-[B, e, ireal, i, b, w,wreal,N,gamma,~,~,~] = generate_banks_randomized(N,p,gamma,theta,E,threshold,minrand,maxrand,type,regulator);
+function[B,a,e,i,c,d,b,w,Bweight] = RandomRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)
 
+[B, e, breal, i, b, w,wreal,N,gamma,~,~,~,Bweight] = generate_banks_randomized(N,p,gamma,theta,E,threshold,minrand,maxrand,type,regulator);
 counter = 0;
 %
 while counter < 1000
-    if any(i>alpha*ireal) == 0 %terminate once no more adjustments have to be made
+    if any(b>alpha*breal) == 0 %terminate once no more adjustments have to be made
         break
     end
     randombanks1 = randperm(N);
     randombanks2 = randperm(N);
     for j = randombanks1
         condition = 0;
-        if i(j) > alpha*ireal(j)
-            row = j;
+        if b(j) > alpha*breal(j)
+            column = j;
             for k = randombanks2
-                column = k;
+                row = k;
                 if B(row,column) == 0 %can't disapprove of loans that don't exist
                     continue
                 else
-                    B(row,column) = 0;
-                    e(j) = e(j) + w(j);
-                    i(j) = i(j) - w(j);
-                    e(column) = e(column) - w(j);
-                    b(column) = b(column) - w(j);
-                    ireal(j) = ireal(j) - wreal;
+                    Bweight(row,column) = 0;
+                    b(j) = b(j) - w(j);
+                    e(j) = e(j) - w(j);
+                    e(k) = e(k) + w(j);
+                    i(k) = i(k) - w(j);
+                    %update relevant quantities for regulator
+                    breal(j) = breal(j) - wreal;
                     condition = 1;
                     break
                 end
