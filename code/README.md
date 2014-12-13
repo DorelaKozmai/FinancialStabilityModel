@@ -1,3 +1,3 @@
 # Code Folder 
 
-Your code goes here. You could also replace the content of this file with something more meaningful
+The final code folder contains the code, while the documentation folder contains automatically generated documentation from m2html.
