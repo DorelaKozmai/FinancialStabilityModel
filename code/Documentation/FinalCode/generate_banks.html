@@ -1,0 +1,83 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of generate_banks</title>
+  <meta name="keywords" content="generate_banks">
+  <meta name="description" content="Function to generate values of the banking system. This is the vanilla bank">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; generate_banks.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>generate_banks
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Function to generate values of the banking system. This is the vanilla bank</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [B, a, e, i, c, d, b, w] = generate_banks(N, p, gamma, theta, E,type) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Function to generate values of the banking system. This is the vanilla bank
+generation function written by the group of the previous year, and no changes have been made
+apart from the inclusion of a new parameter 'type' that tells the function to generate a
+random network or a scale free network.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="pref_graph.html" class="code" title="function [A] = pref_graph(n,p1,p2)">pref_graph</a>	This function is created entirely by our group.</li><li><a href="random_graph.html" class="code" title="function A = random_graph(n, p)">random_graph</a>	This function is created by the previous group, and not adjusted for our</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="test_setups_standard.html" class="code" title="">test_setups_standard</a>	This script is used to compare the random network to the scale free network in</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <a name="_sub0" href="#_subfunctions" class="code">function [B, a, e, i, c, d, b, w] = generate_banks(N, p, gamma, theta, E,type)</a>
+0002 <span class="comment">%Function to generate values of the banking system. This is the vanilla bank</span>
+0003 <span class="comment">%generation function written by the group of the previous year, and no changes have been made</span>
+0004 <span class="comment">%apart from the inclusion of a new parameter 'type' that tells the function to generate a</span>
+0005 <span class="comment">%random network or a scale free network.</span>
+0006 <span class="keyword">if</span> type == 0
+0007     B = <a href="random_graph.html" class="code" title="function A = random_graph(n, p)">random_graph</a>(N,p); <span class="comment">% B = the unidirectional banking system Graph</span>
+0008     <span class="comment">% as N*N Array of 0 and 1</span>
+0009 <span class="keyword">elseif</span> type == 1
+0010     B = <a href="pref_graph.html" class="code" title="function [A] = pref_graph(n,p1,p2)">pref_graph</a>(N,p,p);
+0011 <span class="keyword">end</span>
+0012 
+0013 beta = 1-theta; <span class="comment">% = percentage of external assets in total assets</span>
+0014 A = E / beta;   <span class="comment">% = total Assets</span>
+0015 I = theta * A;  <span class="comment">% = aggregate size of interbank exposures</span>
+0016 
+0017 Z = sum(sum(B));<span class="comment">% = number of links</span>
+0018 w = I / Z;      <span class="comment">% = weight of any link, to define the interbank assets of a bank</span>
+0019 <span class="keyword">if</span> Z==0
+0020     w=0;        <span class="comment">% Set w and therefor also b and i to 0 if there is no link</span>
+0021 <span class="keyword">end</span>
+0022 
+0023 i = sum(B,2)'* w; <span class="comment">% = interbank assets per bank as number of outgoing links times the weight</span>
+0024 b = sum(B,1) * w; <span class="comment">% = interbank borrowing per bank as number of incoming links times the weight</span>
+0025 
+0026 <span class="comment">% two steps to calculate e = external assets per bank</span>
+0027 e = b - i;              <span class="comment">% to fulfil e &gt;= b - i</span>
+0028 e = e + (E - sum(e))/N; <span class="comment">% distribute the rest of E evenly among all banks</span>
+0029 
+0030 a = e + i;     <span class="comment">% = total assets per bank</span>
+0031 c = gamma * a; <span class="comment">% = net worth per bank</span>
+0032 d = a - c - b; <span class="comment">% = consumer deposits per Bank</span>
+0033 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

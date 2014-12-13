@@ -1,0 +1,192 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of test_setups_randomized</title>
+  <meta name="keywords" content="test_setups_randomized">
+  <meta name="description" content="This script is used to compare the random network to the scale free network in">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; test_setups_randomized.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>test_setups_randomized
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This script is used to compare the random network to the scale free network in</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">This script is used to compare the random network to the scale free network in 
+the case of randomized interbank assets, without a regulator. It is based on the
+test setup by the group of the previous year, now applied to a different bank generation
+function and having the plots in a different figure.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>	Function to generate values of the banking system. This is an adjustment to the vanilla bank</li><li><a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>	This function is a slight modification to the one made by the previous</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%This script is used to compare the random network to the scale free network in</span>
+0002 <span class="comment">%the case of randomized interbank assets, without a regulator. It is based on the</span>
+0003 <span class="comment">%test setup by the group of the previous year, now applied to a different bank generation</span>
+0004 <span class="comment">%function and having the plots in a different figure.</span>
+0005 
+0006 <span class="comment">% Faults vs net worth random network, randomized b</span>
+0007 clear all;
+0008 E=100000; <span class="comment">%External assets</span>
+0009 S=50000; <span class="comment">%Shock size</span>
+0010 N=50; <span class="comment">%Number of banks</span>
+0011 p=0.10; <span class="comment">%Erdos Renyi Probability</span>
+0012 theta=0.2; <span class="comment">%Percentage of interbank assets in total assets</span>
+0013 Gamma=0:0.005:0.1; <span class="comment">%Net worth as a percentage of total assets</span>
+0014 minrand = 0.8; <span class="comment">%minimum random number to multiply i with</span>
+0015 maxrand = 2; <span class="comment">%maximum random number to multiply i with</span>
+0016 threshold = 0.001; <span class="comment">%maximum (percentual) deviation from total I after randomization</span>
+0017 type = 0; <span class="comment">%Use the random network</span>
+0018 regulator = 0; <span class="comment">%No regulator</span>
+0019 nGamma=length(Gamma);
+0020 Runs=100;
+0021 nFaults=zeros(Runs,nGamma);
+0022 h=waitbar(0,<span class="string">'0%'</span>);
+0023 <span class="keyword">for</span> gamma=1:nGamma
+0024     <span class="keyword">for</span> r=1:Runs            
+0025         [B, e, ~, i, b, w,~,~,~,a,c,d,Bweight]=<a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>(N,p,Gamma(gamma),theta,E,threshold,minrand,maxrand,type,regulator);
+0026         faults=zeros(1,N);
+0027         deposit=zeros(1,N);
+0028         <span class="keyword">for</span> s=1:N
+0029             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0030             deposit(s)=sum(de)/sum(d);
+0031         <span class="keyword">end</span>
+0032         nFaults(r,gamma)=sum(faults)/N;
+0033         waitbar(((gamma-1)*Runs+r)/nGamma/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*Runs+r)/nGamma/Runs*1000)/10));
+0034     <span class="keyword">end</span>
+0035 <span class="keyword">end</span>
+0036 save(<span class="string">'randomizedgammarand.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Gamma'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>)
+0037 close(h);
+0038 
+0039 <span class="comment">% Faults vs interbank assets random network, randomized b</span>
+0040 clear all;
+0041 E=100000;
+0042 S=50000;
+0043 N=50;
+0044 p=0.10;
+0045 Theta=0:0.1:0.5;
+0046 Gamma=[0.01 0.03 0.05];
+0047 type = 0;
+0048 regulator = 0;
+0049 minrand = 0.8; 
+0050 maxrand = 2; 
+0051 threshold = 0.001; 
+0052 nTheta=length(Theta);
+0053 nGamma=length(Gamma);
+0054 Runs=100;
+0055 nFaults=zeros(Runs,nTheta*nGamma);
+0056 h=waitbar(0,<span class="string">'0%'</span>);
+0057 <span class="keyword">for</span> gamma=1:nGamma
+0058     <span class="keyword">for</span> theta=1:nTheta
+0059         <span class="keyword">for</span> r=1:Runs
+0060             [B, e, ~, i, b, w,~,~,~,a,c,d,Bweight]=<a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>(N,p,Gamma(gamma),Theta(theta),E,threshold,minrand,maxrand,type,regulator);
+0061             faults=zeros(1,N);
+0062             deposit=zeros(1,N);
+0063             <span class="keyword">for</span> s=1:N
+0064                 [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0065                 deposit(s)=1-sum(de)/sum(d);
+0066             <span class="keyword">end</span>
+0067             nFaults(r,(gamma-1)*nTheta+theta)=sum(faults)/N;
+0068             waitbar(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs*1000)/10));
+0069         <span class="keyword">end</span>
+0070     <span class="keyword">end</span>
+0071 <span class="keyword">end</span>
+0072 save(<span class="string">'randomizedthetarand.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Theta'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>,<span class="string">'Gamma'</span>,<span class="string">'nGamma'</span>,<span class="string">'nTheta'</span>)
+0073 close(h);
+0074 
+0075 <span class="comment">% Faults vs net worth preferential network, randomized b</span>
+0076 clear all;
+0077 E=100000;
+0078 S=50000;
+0079 N=50;
+0080 p=0.08; <span class="comment">%Preferential attachment parameter</span>
+0081 theta=0.2;
+0082 Gamma=0:0.005:0.1;
+0083 minrand = 0.8; 
+0084 maxrand = 2; 
+0085 threshold = 0.001; 
+0086 type = 1;
+0087 regulator = 0;
+0088 nGamma=length(Gamma);
+0089 Runs=100;
+0090 nFaults=zeros(Runs,nGamma);
+0091 h=waitbar(0,<span class="string">'0%'</span>);
+0092 <span class="keyword">for</span> gamma=1:nGamma
+0093     <span class="keyword">for</span> r=1:Runs
+0094         [B, e, ~, i, b, w,~,~,~,a,c,d,Bweight]=<a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>(N,p,Gamma(gamma),theta,E,threshold,minrand,maxrand,type,regulator);
+0095         faults=zeros(1,N);
+0096         deposit=zeros(1,N);
+0097         <span class="keyword">for</span> s=1:N
+0098             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0099             deposit(s)=sum(de)/sum(d);
+0100         <span class="keyword">end</span>
+0101         nFaults(r,gamma)=sum(faults)/N;
+0102         waitbar(((gamma-1)*Runs+r)/nGamma/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*Runs+r)/nGamma/Runs*1000)/10));
+0103     <span class="keyword">end</span>
+0104 <span class="keyword">end</span>
+0105 save(<span class="string">'randomizedgammapref.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Gamma'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>)
+0106 close(h);
+0107 
+0108 <span class="comment">% Faults vs interbank assets preferential network, randomized b</span>
+0109 clear all;
+0110 E=100000;
+0111 S=50000;
+0112 N=50;
+0113 p=0.08;
+0114 Theta=0:0.025:0.5;
+0115 Gamma=[0.01 0.03 0.05];
+0116 minrand = 0.8; 
+0117 maxrand = 2; 
+0118 threshold = 0.001; 
+0119 type = 1;
+0120 regulator = 0;
+0121 nTheta=length(Theta);
+0122 nGamma=length(Gamma);
+0123 Runs=100;
+0124 nFaults=zeros(Runs,nTheta*nGamma);
+0125 h=waitbar(0,<span class="string">'0%'</span>);
+0126 <span class="keyword">for</span> gamma=1:nGamma
+0127     <span class="keyword">for</span> theta=1:nTheta
+0128         <span class="keyword">for</span> r=1:Runs
+0129             [B, e, ~, i, b, w,~,~,~,a,c,d,Bweight]=<a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>(N,p,Gamma(gamma),Theta(theta),E,threshold,minrand,maxrand,type,regulator);
+0130             faults=zeros(1,N);
+0131             deposit=zeros(1,N);
+0132             <span class="keyword">for</span> s=1:N
+0133                 [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0134                 deposit(s)=1-sum(de)/sum(d);
+0135             <span class="keyword">end</span>
+0136             nFaults(r,(gamma-1)*nTheta+theta)=sum(faults)/N;
+0137             waitbar(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs*1000)/10));
+0138         <span class="keyword">end</span>
+0139     <span class="keyword">end</span>
+0140 <span class="keyword">end</span>
+0141 save(<span class="string">'randomizedthetapref.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Theta'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>,<span class="string">'Gamma'</span>,<span class="string">'nGamma'</span>,<span class="string">'nTheta'</span>)
+0142 close(h);</pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

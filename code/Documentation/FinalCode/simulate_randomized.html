@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of simulate_randomized</title>
+  <meta name="keywords" content="simulate_randomized">
+  <meta name="description" content="This function is a slight modification to the one made by the previous">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; simulate_randomized.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>simulate_randomized
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This function is a slight modification to the one made by the previous</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">This function is a slight modification to the one made by the previous
+group, but almost identical.
+ Simulation routine
+ B = N*N Array Bij = 1 -&gt; connection from Bank i to j / 0 -&gt; no connection 
+ a = 1*N List of total assets per bank
+ e = 1*N List of external assets per bank
+ i = 1*N List of interbank assets per bank
+ c = 1*N List of net worth per bank
+ d = 1*N List of customer deposits per bank
+ b = 1*N List of interbank borrowing per bank
+ S = 1*1 shock size
+ s = 1*1 shocked bank</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="absorber.html" class="code" title="function [capital1,rest] = absorber(capital0,loss)">absorber</a>	This function is created by the previous group, and not adjusted for our</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="test_setups_randomized.html" class="code" title="">test_setups_randomized</a>	This script is used to compare the random network to the scale free network in</li><li><a href="test_setups_regulator.html" class="code" title="">test_setups_regulator</a>	This script is used to compare the random network to the scale free network in</li></ul>
+<!-- crossreference -->
+
+<h2><a name="_subfunctions"></a>SUBFUNCTIONS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="#_sub1" class="code">function [i,c,d,remaining_shocks,interbank_left]=single_shock(a,c,s,d,i,interbank_left,remaining_shocks,w)</a></li></ul>
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%This function is a slight modification to the one made by the previous</span>
+0002 <span class="comment">%group, but almost identical.</span>
+0003 <a name="_sub0" href="#_subfunctions" class="code">function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)</a>
+0004     <span class="comment">% Simulation routine</span>
+0005     <span class="comment">% B = N*N Array Bij = 1 -&gt; connection from Bank i to j / 0 -&gt; no connection</span>
+0006     <span class="comment">% a = 1*N List of total assets per bank</span>
+0007     <span class="comment">% e = 1*N List of external assets per bank</span>
+0008     <span class="comment">% i = 1*N List of interbank assets per bank</span>
+0009     <span class="comment">% c = 1*N List of net worth per bank</span>
+0010     <span class="comment">% d = 1*N List of customer deposits per bank</span>
+0011     <span class="comment">% b = 1*N List of interbank borrowing per bank</span>
+0012     <span class="comment">% S = 1*1 shock size</span>
+0013     <span class="comment">% s = 1*1 shocked bank</span>
+0014     eps=1E-15;
+0015     N=length(a);
+0016     interbank_left=Bweight;
+0017     remaining_shocks=zeros(1,N);
+0018     <span class="keyword">if</span>(S&gt;a(s))
+0019         <span class="comment">%disp(sprintf('WARNING: shock bigger than total assets, reducing: %s to: %s\n',num2str(S),num2str(a(s))));</span>
+0020         S=a(s);
+0021     <span class="keyword">end</span>
+0022     remaining_shocks(s)=S;
+0023     <span class="keyword">while</span> (max(remaining_shocks)&gt;eps)
+0024         <span class="keyword">for</span> s=1:length(remaining_shocks)
+0025             <span class="keyword">if</span>(remaining_shocks(s)&gt;eps)
+0026                 prec=c;
+0027                 [i,c,d,remaining_shocks,interbank_left]=<a href="#_sub1" class="code" title="subfunction [i,c,d,remaining_shocks,interbank_left]=single_shock(a,c,s,d,i,interbank_left,remaining_shocks,w)">single_shock</a>(a,c,s,d,i,interbank_left,remaining_shocks,w);
+0028                 post=c;
+0029             <span class="keyword">end</span>
+0030         <span class="keyword">end</span>
+0031     <span class="keyword">end</span>   
+0032     F=sum(abs(c)&lt;eps);
+0033 <span class="keyword">end</span>
+0034 
+0035 <a name="_sub1" href="#_subfunctions" class="code">function [i,c,d,remaining_shocks,interbank_left]=single_shock(a,c,s,d,i,interbank_left,remaining_shocks,w)</a>
+0036     <span class="keyword">if</span>(remaining_shocks(s)&gt;a(s))
+0037        error(<span class="string">'Shock bigger than total assets!'</span>)
+0038     <span class="keyword">end</span> 
+0039     <span class="comment">%reduce net worth first</span>
+0040     [c(s),postnet_shock]=<a href="absorber.html" class="code" title="function [capital1,rest] = absorber(capital0,loss)">absorber</a>(c(s),remaining_shocks(s));
+0041 
+0042     <span class="keyword">if</span> (postnet_shock&gt;0)  <span class="comment">%default of first bank</span>
+0043         <span class="comment">%after using all interbank connections the remainder hits depositors</span>
+0044         depositor_shock=max(0,postnet_shock-i(s));
+0045         d(s)=d(s)-depositor_shock;
+0046 
+0047         interbank_shock=min(postnet_shock,i(s));
+0048         i(s)=i(s)-interbank_shock;
+0049         num_creditors=sum(interbank_left(s,:)./w);   <span class="comment">%could be non, integer. interbank_left(s,:) or interbank_left(:,?)</span>
+0050         individual_interbank_shock=min(interbank_left(s,:),postnet_shock/num_creditors);
+0051         interbank_left(s,:)=interbank_left(s,:)-individual_interbank_shock;
+0052         [c,new_shocks]=<a href="absorber.html" class="code" title="function [capital1,rest] = absorber(capital0,loss)">absorber</a>(c,individual_interbank_shock);
+0053         remaining_shocks=remaining_shocks+new_shocks;
+0054     <span class="keyword">end</span>
+0055     remaining_shocks(s)=0;
+0056 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

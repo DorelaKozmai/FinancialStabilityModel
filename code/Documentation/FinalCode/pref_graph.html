@@ -1,0 +1,104 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of pref_graph</title>
+  <meta name="keywords" content="pref_graph">
+  <meta name="description" content="This function is created entirely by our group.">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; pref_graph.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>pref_graph
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This function is created entirely by our group.</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function [A] = pref_graph(n,p1,p2) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">This function is created entirely by our group.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="generate_banks.html" class="code" title="function [B, a, e, i, c, d, b, w] = generate_banks(N, p, gamma, theta, E,type)">generate_banks</a>	Function to generate values of the banking system. This is the vanilla bank</li><li><a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>	Function to generate values of the banking system. This is an adjustment to the vanilla bank</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%This function is created entirely by our group.</span>
+0002 
+0003 <span class="comment">%This function implements a directed preferential attachment algorithm based on the book Complex Graphs and Networks by</span>
+0004 <span class="comment">%Fan Chung and Linyuan Lu. The input variable n denotes the number of</span>
+0005 <span class="comment">%banks, while p1 and p2 are the parameters of the preferential attachment</span>
+0006 <span class="comment">%model, responsible for the scale free degree distributions in outgoing and</span>
+0007 <span class="comment">%incoming edges respectively.</span>
+0008 <a name="_sub0" href="#_subfunctions" class="code">function [A] = pref_graph(n,p1,p2) </a>
+0009  A(1,1) = 1;
+0010  p3 = 1-p1-p2; <span class="comment">%probability for connecting two existing banks</span>
+0011  stepweight = [p1,p2,p3];
+0012  
+0013  <span class="keyword">while</span> size(A,1) &lt; n &amp;&amp; size(A,2) &lt; n <span class="comment">%Making sure we end up with a square matrix</span>
+0014      <span class="comment">%Calculate degree-based weights</span>
+0015      outweight = sum(A,1);
+0016      outweight = outweight/sum(outweight);
+0017      inweight = sum(A,2)';
+0018      inweight = inweight/sum(inweight);
+0019      
+0020      <span class="comment">%One out of three scenarios is chosen</span>
+0021      step = randsample(1:3, 1, true, stepweight);
+0022      <span class="keyword">if</span> step==1 <span class="comment">%Outgoing connection from new bank v to existing bank u based on number of incoming edges for u</span>
+0023          A = [A;zeros(1,size(A,2))];
+0024          outcol = randsample(1:size(A,2), 1, true, outweight);
+0025          A(size(A,1),outcol) = 1;
+0026      <span class="keyword">elseif</span> step==2 <span class="comment">%Incoming connection from new bank v to existing bank u based on number of outgoing edges for u</span>
+0027          A = [A,zeros(size(A,1),1)];
+0028          inrow = randsample(1:size(A,1), 1, true, inweight);
+0029          A(inrow,size(A,2)) = 1;
+0030      <span class="keyword">elseif</span> step==3 <span class="comment">%Outgoing connection from existing bank v to existing bank u, based out and in going edges respectively</span>
+0031          rout = randsample(1:size(A,2), 1, true, outweight);
+0032          rin = randsample(1:size(A,1), 1, true, inweight);
+0033          A(rout,rin) = 1;
+0034      <span class="keyword">end</span>
+0035  <span class="keyword">end</span>
+0036 
+0037  <span class="comment">%Set size to n by n and take out loops</span>
+0038  <span class="keyword">if</span> size(A,1) &lt; n
+0039      <span class="keyword">while</span> size(A,1) &lt; n
+0040          A = [A;zeros(1,size(A,2))];
+0041      <span class="keyword">end</span>
+0042  <span class="keyword">elseif</span> size(A,2) &lt; n
+0043      <span class="keyword">while</span> size(A,2) &lt; n
+0044          A = [A,zeros(size(A,1),1)];
+0045      <span class="keyword">end</span>
+0046  <span class="keyword">end</span>
+0047  A=A-diag(diag(A));
+0048 <span class="keyword">end</span>
+0049  
+0050  
+0051  
+0052  
+0053  
+0054  
+0055  
+0056  
+0057</pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

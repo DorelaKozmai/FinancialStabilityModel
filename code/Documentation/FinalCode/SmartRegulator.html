@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of SmartRegulator</title>
+  <meta name="keywords" content="SmartRegulator">
+  <meta name="description" content="Smart regulator, made by our group">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; SmartRegulator.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>SmartRegulator
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Smart regulator, made by our group</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Smart regulator, made by our group</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>	Function to generate values of the banking system. This is an adjustment to the vanilla bank</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="test_setups_regulator.html" class="code" title="">test_setups_regulator</a>	This script is used to compare the random network to the scale free network in</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%Smart regulator, made by our group</span>
+0002 <a name="_sub0" href="#_subfunctions" class="code">function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)</a>
+0003 
+0004 [B, e, breal, i, b, w,wreal,N,gamma,~,~,~,Bweight] = <a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>(N,p,gamma,theta,E,threshold,minrand,maxrand,type,regulator);
+0005 <span class="comment">%we get as input the randomized e. we want to chec  k if it obeys</span>
+0006 ereal = e;
+0007 counter = 0;
+0008 <span class="comment">% Fixed number of iterations</span>
+0009     <span class="keyword">while</span> counter &lt; 1000
+0010         <span class="keyword">if</span> any(b&gt;alpha*breal) == 0 <span class="comment">%terminate once no more adjustments have to be made</span>
+0011             <span class="keyword">break</span>
+0012         <span class="keyword">end</span>
+0013         ratiob = b./breal;
+0014         ratiob(isnan(ratiob))=0; <span class="comment">%this is to make sure we don't try to help banks without borrowings, as 0/0 = nan and nan &gt; real numbers</span>
+0015         ratioe = e./ereal;
+0016         [~,sortedratio1] = sort(ratiob,<span class="string">'descend'</span>); <span class="comment">%banks with the most borrowings compared to what they should have need help first</span>
+0017         [~,sortedratio2] = sort(ratioe,<span class="string">'ascend'</span>); <span class="comment">%banks with the least external assets can use them the most</span>
+0018         <span class="keyword">for</span> j = sortedratio1
+0019             condition = 0;
+0020             <span class="keyword">if</span> b(j) &gt; alpha*breal(j)
+0021                 column = j;                
+0022                 <span class="keyword">for</span> k = 1:N
+0023                     row = sortedratio2(k);
+0024                     <span class="keyword">if</span> Bweight(row,column) == 0 <span class="comment">%can't disapprove of loans that don't exist</span>
+0025                         <span class="keyword">continue</span>
+0026                     <span class="keyword">else</span>
+0027                         Bweight(row,column) = 0;
+0028                         <span class="comment">%update all relevant quantities</span>
+0029                         b(j) = b(j) - w(j);
+0030                         e(j) = e(j) - w(j);
+0031                         e(k) = e(k) + w(j);
+0032                         i(k) = i(k) - w(j);
+0033                         <span class="comment">%update relevant quantities for regulator</span>
+0034                         breal(j) = breal(j) - wreal;
+0035                         ereal(j) = ereal(j) - wreal;
+0036                         ereal(k) = ereal(k) + wreal;
+0037                         condition = 1;
+0038                         <span class="keyword">break</span>
+0039                     <span class="keyword">end</span>
+0040                 <span class="keyword">end</span>
+0041             <span class="keyword">else</span>
+0042                 <span class="keyword">continue</span>
+0043             <span class="keyword">end</span>
+0044             <span class="keyword">if</span> condition == 1
+0045                 <span class="keyword">break</span>
+0046             <span class="keyword">end</span>
+0047         <span class="keyword">end</span>
+0048         counter = counter+1;
+0049     <span class="keyword">end</span>
+0050     
+0051 a = e + i;     <span class="comment">% = Total assets per bank</span>
+0052 c = gamma * a; <span class="comment">% = Net worth per bank</span>
+0053 d = a - c - b; <span class="comment">% = consumer deposits per Bank</span>
+0054 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

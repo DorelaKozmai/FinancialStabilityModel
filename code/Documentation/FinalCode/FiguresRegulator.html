@@ -1,0 +1,233 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of FiguresRegulator</title>
+  <meta name="keywords" content="FiguresRegulator">
+  <meta name="description" content="Plot the regulated figures. Quite some changes made from plot set ups of">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; FiguresRegulator.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>FiguresRegulator
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Plot the regulated figures. Quite some changes made from plot set ups of</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment">Plot the regulated figures. Quite some changes made from plot set ups of
+the previous group.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">%Plot the regulated figures. Quite some changes made from plot set ups of</span>
+0002 <span class="comment">%the previous group.</span>
+0003 
+0004 <span class="comment">%Figure 1</span>
+0005 load(<span class="string">'smartregrand.mat'</span>)
+0006 meanfaults = mean(nFaults);
+0007 sdfaults = std(nFaults);
+0008 X=[Alpha,fliplr(Alpha)];
+0009 Y1 = [meanfaults+sdfaults/2,fliplr(meanfaults-sdfaults/2)];
+0010 
+0011 figure
+0012 set(gca, <span class="string">'FontSize'</span>, 16);
+0013 h1 = fill(X,Y1,[0.5 0.5 1]);
+0014 set(h1,<span class="string">'facealpha'</span>,.5)
+0015 set(h1,<span class="string">'edgealpha'</span>,.5)
+0016 hold on;
+0017 pl1 = plot(Alpha,meanfaults,<span class="string">'LineWidth'</span>,2);
+0018 
+0019 load(<span class="string">'randregrand.mat'</span>)
+0020 meanfaults = mean(nFaults);
+0021 sdfaults = std(nFaults);
+0022 X=[Alpha,fliplr(Alpha)];
+0023 Y1 = [meanfaults+sdfaults/2,fliplr(meanfaults-sdfaults/2)];
+0024 h2 = fill(X,Y1,[1 0.5 0.5]);
+0025 set(h2,<span class="string">'facealpha'</span>,.5)
+0026 set(h2,<span class="string">'edgealpha'</span>,.5)
+0027 pl2 = plot(Alpha,meanfaults,<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,2);
+0028 
+0029 
+0030 xlabel(<span class="string">'Regulator Ratio'</span>);
+0031 ylabel(<span class="string">'Number of defaults'</span>);
+0032 title(<span class="string">'Random versus smart regulator random network'</span>)
+0033 xlim([min(Alpha) max(Alpha)]);
+0034 ylim([0 N]);
+0035 legend([pl1 pl2],{<span class="string">'Smart'</span>,<span class="string">'Random'</span>},<span class="string">'Location'</span>,<span class="string">'NorthEast'</span>); 
+0036 legend(<span class="string">'boxoff'</span>)
+0037 box on
+0038 grid on
+0039 hold off
+0040 
+0041 <span class="comment">%Figure 2</span>
+0042 load(<span class="string">'smartregpref.mat'</span>)
+0043 meanfaults = mean(nFaults);
+0044 sdfaults = std(nFaults);
+0045 X=[Alpha,fliplr(Alpha)];
+0046 Y1 = [meanfaults+sdfaults/2,fliplr(meanfaults-sdfaults/2)];
+0047 
+0048 figure
+0049 set(gca, <span class="string">'FontSize'</span>, 16);
+0050 h1 = fill(X,Y1,[0.5 0.5 1]);
+0051 set(h1,<span class="string">'facealpha'</span>,.5)
+0052 set(h1,<span class="string">'edgealpha'</span>,.5)
+0053 hold on;
+0054 pl1 = plot(Alpha,meanfaults,<span class="string">'LineWidth'</span>,2);
+0055 
+0056 load(<span class="string">'randregpref.mat'</span>)
+0057 meanfaults = mean(nFaults);
+0058 sdfaults = std(nFaults);
+0059 X=[Alpha,fliplr(Alpha)];
+0060 Y1 = [meanfaults+sdfaults/2,fliplr(meanfaults-sdfaults/2)];
+0061 h2 = fill(X,Y1,[1 0.5 0.5]);
+0062 set(h2,<span class="string">'facealpha'</span>,.5)
+0063 set(h2,<span class="string">'edgealpha'</span>,.5)
+0064 pl2 = plot(Alpha,meanfaults,<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,2);
+0065 
+0066 xlabel(<span class="string">'Regulator Ratio'</span>);
+0067 ylabel(<span class="string">'Number of defaults'</span>);
+0068 title(<span class="string">'Random versus smart regulator preferential network'</span>)
+0069 xlim([min(Alpha) max(Alpha)]);
+0070 ylim([0 N]);
+0071 legend([pl1 pl2],{<span class="string">'Smart'</span>,<span class="string">'Random'</span>},<span class="string">'Location'</span>,<span class="string">'NorthEast'</span>); 
+0072 legend(<span class="string">'boxoff'</span>)
+0073 box on
+0074 grid on
+0075 hold off
+0076 
+0077 <span class="comment">%Figure 3</span>
+0078 load(<span class="string">'smartgammarand.mat'</span>)
+0079 meanfaults = mean(nFaults);
+0080 sdfaults = std(nFaults);
+0081 X=[Gamma,fliplr(Gamma)];
+0082 Y1=[meanfaults+sdfaults/2,fliplr(meanfaults-sdfaults/2)];
+0083 
+0084 figure
+0085 set(gca, <span class="string">'FontSize'</span>, 16);
+0086 h1 = fill(X,Y1,[0.5 0.5 1]);
+0087 hold on;
+0088 pl1 = plot(Gamma,meanfaults,<span class="string">'LineWidth'</span>,2);
+0089 set(gca,<span class="string">'FontSize'</span>,14);
+0090 set(h1,<span class="string">'facealpha'</span>,.5)
+0091 set(h1,<span class="string">'edgealpha'</span>,.5)
+0092 
+0093 load(<span class="string">'smartgammapref.mat'</span>)
+0094 meanfaults = mean(nFaults);
+0095 sdfaults = std(nFaults);
+0096 X=[Gamma,fliplr(Gamma)];
+0097 Y1=[meanfaults+sdfaults/2,fliplr(meanfaults-sdfaults/2)];
+0098 h2 = fill(X,Y1,[1 0.5 0.5]);
+0099 set(h2,<span class="string">'facealpha'</span>,.5)
+0100 set(h2,<span class="string">'edgealpha'</span>,.5)
+0101 pl2 = plot(Gamma,meanfaults,<span class="string">'r-'</span>,<span class="string">'LineWidth'</span>,2);
+0102 
+0103 xlabel(<span class="string">'Percentage net worth'</span>);
+0104 ylabel(<span class="string">'Number of defaults'</span>);
+0105 xlim([0 0.1]);
+0106 ylim([0 N]);
+0107 title(<span class="string">'Smart regulator'</span>)
+0108 legend([pl1 pl2],{<span class="string">'Random'</span>,<span class="string">'Preferential'</span>},<span class="string">'Location'</span>,<span class="string">'NorthEast'</span>); 
+0109 legend(<span class="string">'boxoff'</span>)
+0110 box on
+0111 grid on
+0112 hold off
+0113 
+0114 <span class="comment">%Figure 4</span>
+0115 load(<span class="string">'smartthetarand.mat'</span>)
+0116 meanfaults = mean(nFaults);
+0117 sdfaults = std(nFaults);
+0118 X=[Theta,fliplr(Theta)];
+0119 Y1=[meanfaults(1:nTheta)+sdfaults(1:nTheta)/2,fliplr(meanfaults(1:nTheta)-sdfaults(1:nTheta)/2)];
+0120 Y2=[meanfaults(nTheta+(1:nTheta))+sdfaults(nTheta+(1:nTheta))/2,fliplr(meanfaults(nTheta+(1:nTheta))-sdfaults(nTheta+(1:nTheta))/2)];
+0121 Y3=[meanfaults(2*nTheta+(1:nTheta))+sdfaults(2*nTheta+(1:nTheta))/2,fliplr(meanfaults(2*nTheta+(1:nTheta))-sdfaults(2*nTheta+(1:nTheta))/2)];
+0122 
+0123 figure
+0124 set(gca, <span class="string">'FontSize'</span>, 16);
+0125 h1 = fill(X,Y1,[0.5 0.5 1]);
+0126 set(h1,<span class="string">'facealpha'</span>,.5)
+0127 set(h1,<span class="string">'edgealpha'</span>,.5)
+0128 hold on;
+0129 h2 = fill(X,Y2,[0.5 1 0.5]);
+0130 set(h2,<span class="string">'facealpha'</span>,.5)
+0131 set(h2,<span class="string">'edgealpha'</span>,.5)
+0132 h3 = fill(X,Y3,[1 0.5 0.5]);
+0133 set(h3,<span class="string">'facealpha'</span>,.5)
+0134 set(h3,<span class="string">'edgealpha'</span>,.5)
+0135 pl=plot(Theta,meanfaults(1:nTheta),Theta,meanfaults(nTheta+(1:nTheta)),Theta,meanfaults(2*nTheta+(1:nTheta)),<span class="string">'LineWidth'</span>,2);
+0136 
+0137 xlabel(<span class="string">'Percentage interbank assets'</span>);
+0138 ylabel(<span class="string">'Number of defaults'</span>);
+0139 legend(pl,<span class="string">'Net Worth 1%'</span>,<span class="string">'Net Worth 3%'</span>,<span class="string">'Net Worth 5%'</span>,<span class="string">'Location'</span>,<span class="string">'northwest'</span>);
+0140 xlim([0 0.5]);
+0141 ylim([0 N]);
+0142 title(<span class="string">'Smart regulator, random network'</span>)
+0143 legend(<span class="string">'boxoff'</span>)
+0144 box on
+0145 grid on
+0146 hold off
+0147 
+0148 <span class="comment">%Figure 5</span>
+0149 load(<span class="string">'smartthetapref.mat'</span>)
+0150 meanfaults = mean(nFaults);
+0151 sdfaults = std(nFaults);
+0152 X=[Theta,fliplr(Theta)];
+0153 Y1=[meanfaults(1:nTheta)+sdfaults(1:nTheta)/2,fliplr(meanfaults(1:nTheta)-sdfaults(1:nTheta)/2)];
+0154 Y2=[meanfaults(nTheta+(1:nTheta))+sdfaults(nTheta+(1:nTheta))/2,fliplr(meanfaults(nTheta+(1:nTheta))-sdfaults(nTheta+(1:nTheta))/2)];
+0155 Y3=[meanfaults(2*nTheta+(1:nTheta))+sdfaults(2*nTheta+(1:nTheta))/2,fliplr(meanfaults(2*nTheta+(1:nTheta))-sdfaults(2*nTheta+(1:nTheta))/2)];
+0156 
+0157 figure
+0158 set(gca, <span class="string">'FontSize'</span>, 16);
+0159 h1 = fill(X,Y1,[0.5 0.5 1]);
+0160 set(h1,<span class="string">'facealpha'</span>,.5)
+0161 set(h1,<span class="string">'edgealpha'</span>,.5)
+0162 hold on;
+0163 h2 = fill(X,Y2,[0.5 1 0.5]);
+0164 set(h2,<span class="string">'facealpha'</span>,.5)
+0165 set(h2,<span class="string">'edgealpha'</span>,.5)
+0166 h3 = fill(X,Y3,[1 0.5 0.5]);
+0167 set(h3,<span class="string">'facealpha'</span>,.5)
+0168 set(h3,<span class="string">'edgealpha'</span>,.5)
+0169 pl=plot(Theta,meanfaults(1:nTheta),Theta,meanfaults(nTheta+(1:nTheta)),Theta,meanfaults(2*nTheta+(1:nTheta)),<span class="string">'LineWidth'</span>,2);
+0170 
+0171 xlabel(<span class="string">'Percentage interbank assets'</span>);
+0172 ylabel(<span class="string">'Number of defaults'</span>);
+0173 legend(pl,<span class="string">'Net Worth 1%'</span>,<span class="string">'Net Worth 3%'</span>,<span class="string">'Net Worth 5%'</span>,<span class="string">'Location'</span>,<span class="string">'NorthWest'</span>);
+0174 xlim([0 0.5]);
+0175 ylim([0 N]);
+0176 title(<span class="string">'Smart regulator, preferential network'</span>)
+0177 legend(<span class="string">'boxoff'</span>)
+0178 box on
+0179 grid on
+0180 hold off
+0181 
+0182 
+0183 
+0184 
+0185</pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

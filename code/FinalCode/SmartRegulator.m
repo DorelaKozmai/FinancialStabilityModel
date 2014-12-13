@@ -1,15 +1,11 @@
-% simplified regulator
-% available inputs are B, a, e, i, c, d, b, w. These are the weighted links
-% matrix B, assets per bank a, interbank borrowing minus lending e,
-% interbank lending i, interbank borrowing b, weights w, consumer deposits
-% d, net worth per bank c.
+%Smart regulator, made by our group
 function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)
 
 [B, e, breal, i, b, w,wreal,N,gamma,~,~,~,Bweight] = generate_banks_randomized(N,p,gamma,theta,E,threshold,minrand,maxrand,type,regulator);
 %we get as input the randomized e. we want to chec  k if it obeys
 ereal = e;
 counter = 0;
-% 
+% Fixed number of iterations
     while counter < 1000
         if any(b>alpha*breal) == 0 %terminate once no more adjustments have to be made
             break

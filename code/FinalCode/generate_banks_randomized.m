@@ -1,6 +1,7 @@
 function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)
 %Function to generate values of the banking system. This is an adjustment to the vanilla bank 
-%generation function written by the group in the previous year, as we now randomize i. 
+%generation function written by the group in the previous year, as we now
+%randomize b while keeping sum(b) = B fixed.
 if type == 0
 B = random_graph(N,p); % Random Graph
 elseif type == 1
@@ -17,12 +18,12 @@ if Z==0
     w=0;        % Set w and therefor also b and i to 0 if there is no link
 end
 
-b = sum(B,1) * w; % = interbank borrowing per bank as number of incoming links times the weight
-%Randomize the interbank assets per bank
-randfac = (maxrand-minrand).*rand(1,N) + minrand; %Draw random numbers
-Btotal = sum(b); %We want to keep the total B fixed
-breal = b; %remember the real b for the regulator
-b = randfac.*b; %randomize b
+%randomize b while keeping B fixed
+b = sum(B,1) * w; 
+randfac = (maxrand-minrand).*rand(1,N) + minrand; 
+Btotal = sum(b); 
+breal = b; 
+b = randfac.*b; 
 
 while sum(b) < (1-threshold)*Btotal || sum(b) > (1+threshold)*Btotal %if the sum of b = B is not in the desired range, make sure it gets there
     if sum(b) > (1+threshold)*Btotal %If B is too large, redraw r > 1 randomly

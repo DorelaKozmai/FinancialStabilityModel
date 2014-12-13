@@ -1,0 +1,328 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of test_setups_regulator</title>
+  <meta name="keywords" content="test_setups_regulator">
+  <meta name="description" content="This script is used to compare the random network to the scale free network in">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; test_setups_regulator.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>test_setups_regulator
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This script is used to compare the random network to the scale free network in</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>This is a script file. </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> This script is used to compare the random network to the scale free network in 
+ the case of randomized interbank assets, with a smart or dumb regulator. It is based on the
+ test setup by the group of the previous year, now applied to a different bank generation
+ function with regulators. The figures are in a different script.</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="RandomRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = RandomRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">RandomRegulator</a>	Simplified Regulator, created by our group</li><li><a href="SmartRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">SmartRegulator</a>	Smart regulator, made by our group</li><li><a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>	This function is a slight modification to the one made by the previous</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+</ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% This script is used to compare the random network to the scale free network in</span>
+0002 <span class="comment">% the case of randomized interbank assets, with a smart or dumb regulator. It is based on the</span>
+0003 <span class="comment">% test setup by the group of the previous year, now applied to a different bank generation</span>
+0004 <span class="comment">% function with regulators. The figures are in a different script.</span>
+0005 
+0006 <span class="comment">% Faults vs regulator random b</span>
+0007 clear all;
+0008 E=100000;
+0009 S=50000;
+0010 N=50;
+0011 p=0.10;
+0012 theta=0.2;
+0013 gamma = 0.005;
+0014 Alpha = 1:0.05:2;
+0015 nAlpha = length(Alpha);
+0016 threshold = 0.001;
+0017 minrand = 0.8;
+0018 maxrand = 2;
+0019 type = 0;
+0020 regulator = 1;
+0021 Runs=100;
+0022 nFaults=zeros(Runs,nAlpha);
+0023 h=waitbar(0,<span class="string">'0%'</span>);
+0024 <span class="keyword">for</span> alpha=1:nAlpha
+0025     <span class="keyword">for</span> r=1:Runs 
+0026         [B,a,e,i,c,d,b,w,Bweight]=<a href="SmartRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">SmartRegulator</a>(N,p,gamma,theta,E,threshold,minrand,maxrand,Alpha(alpha),type,regulator);
+0027         faults=zeros(1,N);
+0028         deposit=zeros(1,N);
+0029         <span class="keyword">for</span> s=1:N
+0030             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0031             deposit(s)=sum(de)/sum(d);
+0032         <span class="keyword">end</span>
+0033         nFaults(r,alpha)=sum(faults)/N;
+0034         waitbar(((alpha-1)*Runs+r)/nAlpha/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((alpha-1)*Runs+r)/nAlpha/Runs*1000)/10));
+0035     <span class="keyword">end</span>
+0036 <span class="keyword">end</span>
+0037 save(<span class="string">'smartregrand.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Alpha'</span>,<span class="string">'Runs'</span>,<span class="string">'N'</span>)
+0038 
+0039 <span class="comment">% Faults vs regulator random b preferential</span>
+0040 clear all;
+0041 E=100000;
+0042 S=50000;
+0043 N=50;
+0044 p=0.08;
+0045 theta=0.2;
+0046 gamma = 0.005;
+0047 Alpha = 1:0.05:2;
+0048 nAlpha = length(Alpha);
+0049 threshold = 0.001;
+0050 minrand = 0.8;
+0051 maxrand = 2;
+0052 type = 1;
+0053 regulator = 1;
+0054 Runs=100;
+0055 nFaults=zeros(Runs,nAlpha);
+0056 h=waitbar(0,<span class="string">'0%'</span>);
+0057 <span class="keyword">for</span> alpha=1:nAlpha
+0058     <span class="keyword">for</span> r=1:Runs 
+0059         [B,a,e,i,c,d,b,w,Bweight]=<a href="SmartRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">SmartRegulator</a>(N,p,gamma,theta,E,threshold,minrand,maxrand,Alpha(alpha),type,regulator);
+0060         faults=zeros(1,N);
+0061         deposit=zeros(1,N);
+0062         <span class="keyword">for</span> s=1:N
+0063             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0064             deposit(s)=sum(de)/sum(d);
+0065         <span class="keyword">end</span>
+0066         nFaults(r,alpha)=sum(faults)/N;
+0067         waitbar(((alpha-1)*Runs+r)/nAlpha/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((alpha-1)*Runs+r)/nAlpha/Runs*1000)/10));
+0068     <span class="keyword">end</span>
+0069 <span class="keyword">end</span>
+0070 save(<span class="string">'smartregpref.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Alpha'</span>,<span class="string">'Runs'</span>,<span class="string">'N'</span>)
+0071 
+0072 <span class="comment">% Faults vs regulator random b random</span>
+0073 clear all;
+0074 E=100000;
+0075 S=50000;
+0076 N=50;
+0077 p=0.10;
+0078 theta=0.2;
+0079 gamma = 0.005;
+0080 Alpha = 1:0.05:2;
+0081 nAlpha = length(Alpha);
+0082 threshold = 0.001;
+0083 minrand = 0.8;
+0084 maxrand = 2;
+0085 type = 0;
+0086 regulator = 1;
+0087 Runs=100;
+0088 nFaults=zeros(Runs,nAlpha);
+0089 h=waitbar(0,<span class="string">'0%'</span>);
+0090 <span class="keyword">for</span> alpha=1:nAlpha
+0091     <span class="keyword">for</span> r=1:Runs            
+0092         [B,a,e,i,c,d,b,w,Bweight]=<a href="RandomRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = RandomRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">RandomRegulator</a>(N,p,gamma,theta,E,threshold,minrand,maxrand,Alpha(alpha),type,regulator);
+0093         faults=zeros(1,N);
+0094         deposit=zeros(1,N);
+0095         <span class="keyword">for</span> s=1:N
+0096             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0097             deposit(s)=sum(de)/sum(d);
+0098         <span class="keyword">end</span>
+0099         nFaults(r,alpha)=sum(faults)/N;
+0100         waitbar(((alpha-1)*Runs+r)/nAlpha/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((alpha-1)*Runs+r)/nAlpha/Runs*1000)/10));
+0101     <span class="keyword">end</span>
+0102 <span class="keyword">end</span>
+0103 save(<span class="string">'randregrand.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Alpha'</span>,<span class="string">'Runs'</span>,<span class="string">'N'</span>)
+0104 
+0105 <span class="comment">% Faults vs regulator random b preferential</span>
+0106 clear all;
+0107 E=100000;
+0108 S=50000;
+0109 N=50;
+0110 p=0.08;
+0111 theta=0.2;
+0112 gamma = 0.005;
+0113 Alpha = 1:0.05:2;
+0114 nAlpha = length(Alpha);
+0115 threshold = 0.001;
+0116 minrand = 0.8;
+0117 maxrand = 2;
+0118 type = 1;
+0119 regulator = 1;
+0120 Runs=100;
+0121 nFaults=zeros(Runs,nAlpha);
+0122 h=waitbar(0,<span class="string">'0%'</span>);
+0123 <span class="keyword">for</span> alpha=1:nAlpha
+0124     <span class="keyword">for</span> r=1:Runs             
+0125         [B,a,e,i,c,d,b,w,Bweight]=<a href="RandomRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = RandomRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">RandomRegulator</a>(N,p,gamma,theta,E,threshold,minrand,maxrand,Alpha(alpha),type,regulator);
+0126         faults=zeros(1,N);
+0127         deposit=zeros(1,N);
+0128         <span class="keyword">for</span> s=1:N
+0129             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0130             deposit(s)=sum(de)/sum(d);
+0131         <span class="keyword">end</span>
+0132         nFaults(r,alpha)=sum(faults)/N;
+0133         waitbar(((alpha-1)*Runs+r)/nAlpha/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((alpha-1)*Runs+r)/nAlpha/Runs*1000)/10));
+0134     <span class="keyword">end</span>
+0135 <span class="keyword">end</span>
+0136 save(<span class="string">'randregpref.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Alpha'</span>,<span class="string">'Runs'</span>,<span class="string">'N'</span>)
+0137 
+0138 <span class="comment">% Faults vs net worth random network, randomized b</span>
+0139 clear all;
+0140 E=100000; <span class="comment">%External assets</span>
+0141 S=50000; <span class="comment">%Shock size</span>
+0142 N=50; <span class="comment">%Number of banks</span>
+0143 p=0.10; <span class="comment">%Erdos Renyi Probability</span>
+0144 theta=0.2; <span class="comment">%Percentage of interbank assets in total assets</span>
+0145 Gamma=0:0.005:0.1; <span class="comment">%Net worth as a percentage of total assets</span>
+0146 minrand = 0.8; <span class="comment">%minimum random number to multiply i with</span>
+0147 maxrand = 2; <span class="comment">%maximum random number to multiply i with</span>
+0148 alpha = 1.2;
+0149 threshold = 0.001; <span class="comment">%maximum (percentual) deviation from total I after randomization</span>
+0150 type = 0; <span class="comment">%Use the random network</span>
+0151 regulator = 1; <span class="comment">%Regulator</span>
+0152 nGamma=length(Gamma);
+0153 Runs=100;
+0154 nFaults=zeros(Runs,nGamma);
+0155 h=waitbar(0,<span class="string">'0%'</span>);
+0156 <span class="keyword">for</span> gamma=1:nGamma
+0157     <span class="keyword">for</span> r=1:Runs
+0158         [B,a,e,i,c,d,b,w,Bweight]=<a href="SmartRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">SmartRegulator</a>(N,p,Gamma(gamma),theta,E,threshold,minrand,maxrand,alpha,type,regulator);
+0159         faults=zeros(1,N);
+0160         deposit=zeros(1,N);
+0161         <span class="keyword">for</span> s=1:N
+0162             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0163             deposit(s)=sum(de)/sum(d);
+0164         <span class="keyword">end</span>
+0165         nFaults(r,gamma)=sum(faults)/N;
+0166         waitbar(((gamma-1)*Runs+r)/nGamma/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*Runs+r)/nGamma/Runs*1000)/10));
+0167     <span class="keyword">end</span>
+0168 <span class="keyword">end</span>
+0169 save(<span class="string">'smartgammarand.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Gamma'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>)
+0170 close(h);
+0171 
+0172 <span class="comment">% Faults vs interbank assets random network, randomized b</span>
+0173 clear all;
+0174 E=100000;
+0175 S=50000;
+0176 N=50;
+0177 p=0.10;
+0178 Theta=0:0.1:0.5;
+0179 Gamma=[0.01 0.03 0.05];
+0180 type = 0;
+0181 regulator = 1;
+0182 minrand = 0.8; 
+0183 maxrand = 2; 
+0184 alpha = 1.2;
+0185 threshold = 0.001; 
+0186 nTheta=length(Theta);
+0187 nGamma=length(Gamma);
+0188 Runs=100;
+0189 nFaults=zeros(Runs,nTheta*nGamma);
+0190 h=waitbar(0,<span class="string">'0%'</span>);
+0191 <span class="keyword">for</span> gamma=1:nGamma
+0192     <span class="keyword">for</span> theta=1:nTheta
+0193         <span class="keyword">for</span> r=1:Runs
+0194             [B,a,e,i,c,d,b,w,Bweight]=<a href="SmartRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">SmartRegulator</a>(N,p,Gamma(gamma),Theta(theta),E,threshold,minrand,maxrand,alpha,type,regulator);
+0195             faults=zeros(1,N);
+0196             deposit=zeros(1,N);
+0197             <span class="keyword">for</span> s=1:N
+0198                 [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0199                 deposit(s)=1-sum(de)/sum(d);
+0200             <span class="keyword">end</span>
+0201             nFaults(r,(gamma-1)*nTheta+theta)=sum(faults)/N;
+0202             waitbar(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs*1000)/10));
+0203         <span class="keyword">end</span>
+0204     <span class="keyword">end</span>
+0205 <span class="keyword">end</span>
+0206 save(<span class="string">'smartthetarand.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Theta'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>,<span class="string">'Gamma'</span>,<span class="string">'nGamma'</span>,<span class="string">'nTheta'</span>)
+0207 close(h);
+0208 
+0209 <span class="comment">% Faults vs net worth preferential network, randomized b</span>
+0210 clear all;
+0211 E=100000;
+0212 S=50000;
+0213 N=50;
+0214 p=0.08; <span class="comment">%Preferential attachment parameter</span>
+0215 theta=0.2;
+0216 Gamma=0:0.005:0.1;
+0217 minrand = 0.8; 
+0218 maxrand = 2; 
+0219 alpha = 1.2;
+0220 threshold = 0.001; 
+0221 type = 1;
+0222 regulator = 1;
+0223 nGamma=length(Gamma);
+0224 Runs=100;
+0225 nFaults=zeros(Runs,nGamma);
+0226 h=waitbar(0,<span class="string">'0%'</span>);
+0227 <span class="keyword">for</span> gamma=1:nGamma
+0228     <span class="keyword">for</span> r=1:Runs
+0229         [B,a,e,i,c,d,b,w,Bweight]=<a href="SmartRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">SmartRegulator</a>(N,p,Gamma(gamma),theta,E,threshold,minrand,maxrand,alpha,type,regulator);
+0230         faults=zeros(1,N);
+0231         deposit=zeros(1,N);
+0232         <span class="keyword">for</span> s=1:N
+0233             [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0234             deposit(s)=sum(de)/sum(d);
+0235         <span class="keyword">end</span>
+0236         nFaults(r,gamma)=sum(faults)/N;
+0237         waitbar(((gamma-1)*Runs+r)/nGamma/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*Runs+r)/nGamma/Runs*1000)/10));
+0238     <span class="keyword">end</span>
+0239 <span class="keyword">end</span>
+0240 save(<span class="string">'smartgammapref.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Gamma'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>)
+0241 close(h);
+0242 
+0243 <span class="comment">% Faults vs interbank assets preferential network, randomized b</span>
+0244 clear all;
+0245 E=100000;
+0246 S=50000;
+0247 N=50;
+0248 p=0.08;
+0249 Theta=0:0.025:0.5;
+0250 Gamma=[0.01 0.03 0.05];
+0251 minrand = 0.8; 
+0252 maxrand = 2; 
+0253 threshold = 0.001; 
+0254 type = 1;
+0255 regulator = 1;
+0256 alpha = 1.2;
+0257 nTheta=length(Theta);
+0258 nGamma=length(Gamma);
+0259 Runs=100;
+0260 nFaults=zeros(Runs,nTheta*nGamma);
+0261 h=waitbar(0,<span class="string">'0%'</span>);
+0262 <span class="keyword">for</span> gamma=1:nGamma
+0263     <span class="keyword">for</span> theta=1:nTheta
+0264         <span class="keyword">for</span> r=1:Runs
+0265             [B,a,e,i,c,d,b,w,Bweight]=<a href="SmartRegulator.html" class="code" title="function[B,a,e,i,c,d,b,w,Bweight] = SmartRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)">SmartRegulator</a>(N,p,Gamma(gamma),Theta(theta),E,threshold,minrand,maxrand,alpha,type,regulator);
+0266             faults=zeros(1,N);
+0267             deposit=zeros(1,N);
+0268             <span class="keyword">for</span> s=1:N
+0269                 [faults(s), de]=<a href="simulate_randomized.html" class="code" title="function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)">simulate_randomized</a>(B,a,e,i,c,d,b,w,S,s,Bweight);
+0270                 deposit(s)=1-sum(de)/sum(d);
+0271             <span class="keyword">end</span>
+0272             nFaults(r,(gamma-1)*nTheta+theta)=sum(faults)/N;
+0273             waitbar(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs,h,sprintf(<span class="string">'%g%%'</span>,round(((gamma-1)*nTheta*Runs+(theta-1)*Runs+r)/nGamma/nTheta/Runs*1000)/10));
+0274         <span class="keyword">end</span>
+0275     <span class="keyword">end</span>
+0276 <span class="keyword">end</span>
+0277 save(<span class="string">'smartthetapref.mat'</span>,<span class="string">'nFaults'</span>,<span class="string">'Theta'</span>,<span class="string">'N'</span>,<span class="string">'Runs'</span>,<span class="string">'Gamma'</span>,<span class="string">'nGamma'</span>,<span class="string">'nTheta'</span>)
+0278 close(h);</pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

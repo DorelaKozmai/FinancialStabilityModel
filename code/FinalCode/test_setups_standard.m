@@ -2,13 +2,13 @@
 %the vanilla model set up by the group of the previous year. Some modifications have
 %been made to the existing script from last year, in the form of various 
 %parameter changes and small tweaks to the loops that were put in. Moreover, the 
-%preferential network has been added, as this is a new addition, and data is now saved.
-
+%preferential network has been added, as this is a new addition, and data
+%is now saved. The figures are in a different script.
 
 % Faults vs net worth random network
 clear all;
 E=100000; %External assets
-S=50000; %Shock size
+S=100000; %Shock size
 N=50; %Number of banks
 p=0.10; %Erdos Renyi Probability
 theta=0.2; %Percentage of interbank assets in total assets
@@ -34,10 +34,10 @@ end
 save('gammarand.mat','nFaults','Gamma','N','Runs')
 close(h);
   
-Faults vs interbank assets random network
+% Faults vs interbank assets random network
 clear all;
 E=100000;
-S=50000;
+S=100000;
 N=50;
 p=0.10;
 Theta=0:0.1:0.5;
@@ -69,7 +69,7 @@ close(h);
 % Faults vs net worth preferential network
 clear all;
 E=100000;
-S=50000;
+S=100000;
 N=50;
 p=0.08; %Preferential attachment parameter
 theta=0.2;
@@ -98,7 +98,7 @@ close(h);
 % Faults vs interbank assets preferential network
 clear all;
 E=100000;
-S=50000;
+S=100000;
 N=50;
 p=0.08;
 Theta=0:0.025:0.5;

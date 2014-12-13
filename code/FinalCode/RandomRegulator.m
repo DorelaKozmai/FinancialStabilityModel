@@ -1,17 +1,15 @@
-% simplified regulator
-% available inputs are B, a, e, i, c, d, b, w. These are the weighted links
-% matrix B, assets per bank a, interbank borrowing minus lending e,
-% interbank lending i, interbank borrowing b, weights w, consumer deposits
-% d, net worth per bank c.
+% Simplified Regulator, created by our group
+
 function[B,a,e,i,c,d,b,w,Bweight] = RandomRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)
 
 [B, e, breal, i, b, w,wreal,N,gamma,~,~,~,Bweight] = generate_banks_randomized(N,p,gamma,theta,E,threshold,minrand,maxrand,type,regulator);
 counter = 0;
-%
+%it has a fixed amount of iterations 
 while counter < 1000
     if any(b>alpha*breal) == 0 %terminate once no more adjustments have to be made
         break
     end
+    %choose banks randomly
     randombanks1 = randperm(N);
     randombanks2 = randperm(N);
     for j = randombanks1
@@ -23,6 +21,7 @@ while counter < 1000
                 if B(row,column) == 0 %can't disapprove of loans that don't exist
                     continue
                 else
+                    %update network
                     Bweight(row,column) = 0;
                     b(j) = b(j) - w(j);
                     e(j) = e(j) - w(j);

@@ -1,0 +1,97 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+                "http://www.w3.org/TR/REC-html40/loose.dtd">
+<html>
+<head>
+  <title>Description of RandomRegulator</title>
+  <meta name="keywords" content="RandomRegulator">
+  <meta name="description" content="Simplified Regulator, created by our group">
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+  <meta name="generator" content="m2html v1.5 &copy; 2003-2005 Guillaume Flandin">
+  <meta name="robots" content="index, follow">
+  <link type="text/css" rel="stylesheet" href="../m2html.css">
+</head>
+<body>
+<a name="_top"></a>
+<div><a href="../index.html">Home</a> &gt;  <a href="index.html">FinalCode</a> &gt; RandomRegulator.m</div>
+
+<!--<table width="100%"><tr><td align="left"><a href="../index.html"><img alt="<" border="0" src="../left.png">&nbsp;Master index</a></td>
+<td align="right"><a href="index.html">Index for FinalCode&nbsp;<img alt=">" border="0" src="../right.png"></a></td></tr></table>-->
+
+<h1>RandomRegulator
+</h1>
+
+<h2><a name="_name"></a>PURPOSE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>Simplified Regulator, created by our group</strong></div>
+
+<h2><a name="_synopsis"></a>SYNOPSIS <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="box"><strong>function[B,a,e,i,c,d,b,w,Bweight] = RandomRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator) </strong></div>
+
+<h2><a name="_description"></a>DESCRIPTION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre class="comment"> Simplified Regulator, created by our group</pre></div>
+
+<!-- crossreference -->
+<h2><a name="_cross"></a>CROSS-REFERENCE INFORMATION <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+This function calls:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>	Function to generate values of the banking system. This is an adjustment to the vanilla bank</li></ul>
+This function is called by:
+<ul style="list-style-image:url(../matlabicon.gif)">
+<li><a href="test_setups_regulator.html" class="code" title="">test_setups_regulator</a>	This script is used to compare the random network to the scale free network in</li></ul>
+<!-- crossreference -->
+
+
+
+<h2><a name="_source"></a>SOURCE CODE <a href="#_top"><img alt="^" border="0" src="../up.png"></a></h2>
+<div class="fragment"><pre>0001 <span class="comment">% Simplified Regulator, created by our group</span>
+0002 
+0003 <a name="_sub0" href="#_subfunctions" class="code">function[B,a,e,i,c,d,b,w,Bweight] = RandomRegulator(N,p,gamma,theta,E,threshold,minrand,maxrand,alpha,type,regulator)</a>
+0004 
+0005 [B, e, breal, i, b, w,wreal,N,gamma,~,~,~,Bweight] = <a href="generate_banks_randomized.html" class="code" title="function [B, e, breal, i, b, w,wreal,N,gamma,a,c,d,Bweight] = generate_banks_randomized(N, p,gamma, theta, E,threshold,minrand,maxrand,type,regulator)">generate_banks_randomized</a>(N,p,gamma,theta,E,threshold,minrand,maxrand,type,regulator);
+0006 counter = 0;
+0007 <span class="comment">%it has a fixed amount of iterations</span>
+0008 <span class="keyword">while</span> counter &lt; 1000
+0009     <span class="keyword">if</span> any(b&gt;alpha*breal) == 0 <span class="comment">%terminate once no more adjustments have to be made</span>
+0010         <span class="keyword">break</span>
+0011     <span class="keyword">end</span>
+0012     <span class="comment">%choose banks randomly</span>
+0013     randombanks1 = randperm(N);
+0014     randombanks2 = randperm(N);
+0015     <span class="keyword">for</span> j = randombanks1
+0016         condition = 0;
+0017         <span class="keyword">if</span> b(j) &gt; alpha*breal(j)
+0018             column = j;
+0019             <span class="keyword">for</span> k = randombanks2
+0020                 row = k;
+0021                 <span class="keyword">if</span> B(row,column) == 0 <span class="comment">%can't disapprove of loans that don't exist</span>
+0022                     <span class="keyword">continue</span>
+0023                 <span class="keyword">else</span>
+0024                     <span class="comment">%update network</span>
+0025                     Bweight(row,column) = 0;
+0026                     b(j) = b(j) - w(j);
+0027                     e(j) = e(j) - w(j);
+0028                     e(k) = e(k) + w(j);
+0029                     i(k) = i(k) - w(j);
+0030                     <span class="comment">%update relevant quantities for regulator</span>
+0031                     breal(j) = breal(j) - wreal;
+0032                     condition = 1;
+0033                     <span class="keyword">break</span>
+0034                 <span class="keyword">end</span>
+0035             <span class="keyword">end</span>
+0036         <span class="keyword">else</span>
+0037             <span class="keyword">continue</span>
+0038         <span class="keyword">end</span>
+0039         <span class="keyword">if</span> condition == 1
+0040             <span class="keyword">break</span>
+0041         <span class="keyword">end</span>
+0042     <span class="keyword">end</span>
+0043     counter = counter+1;
+0044 <span class="keyword">end</span>
+0045 
+0046 
+0047 a = e + i;     <span class="comment">% = Total assets per bank</span>
+0048 c = gamma * a; <span class="comment">% = Net worth per bank</span>
+0049 d = a - c - b; <span class="comment">% = consumer deposits per Bank</span>
+0050 <span class="keyword">end</span></pre></div>
+<hr><address>Generated on Sat 13-Dec-2014 02:21:16 by <strong><a href="http://www.artefact.tk/software/matlab/m2html/" title="Matlab Documentation in HTML">m2html</a></strong> &copy; 2005</address>
+</body>
+</html>

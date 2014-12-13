@@ -1,6 +1,5 @@
-%This function is created by the previous group, and not adjusted for our
-%project.
-function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)
+%This function is created by the previous group.
+function [F,d] = simulate(B, a, e, i, c, d, b, w, S, s)
     % Simulation routine
     % B = N*N Array Bij = 1 -> connection from Bank i to j / 0 -> no connection 
     % a = 1*N List of total assets per bank
@@ -13,7 +12,7 @@ function [F,d] = simulate_randomized(~, a, ~, i, c, d, ~, w, S, s,Bweight)
     % s = 1*1 shocked bank
     eps=1E-15;
     N=length(a);
-    interbank_left=Bweight;
+    interbank_left=B*w;
     remaining_shocks=zeros(1,N);
     if(S>a(s))
         %disp(sprintf('WARNING: shock bigger than total assets, reducing: %s to: %s\n',num2str(S),num2str(a(s))));
@@ -46,7 +45,7 @@ function [i,c,d,remaining_shocks,interbank_left]=single_shock(a,c,s,d,i,interban
 
         interbank_shock=min(postnet_shock,i(s));
         i(s)=i(s)-interbank_shock;
-        num_creditors=sum(interbank_left(s,:)./w);   %could be non, integer. interbank_left(s,:) or interbank_left(:,?)
+        num_creditors=sum(interbank_left(s,:))/w;   %could be non, integer. interbank_left(s,:) or interbank_left(:,?)
         individual_interbank_shock=min(interbank_left(s,:),postnet_shock/num_creditors);
         interbank_left(s,:)=interbank_left(s,:)-individual_interbank_shock;
         [c,new_shocks]=absorber(c,individual_interbank_shock);

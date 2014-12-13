@@ -1,3 +1,6 @@
+%Plot the randomized figures. Quite some changes made from plot set ups of
+%the previous group.
+
 %Figure 1
 load('randomizedgammarand.mat')
 meanfaults = mean(nFaults);

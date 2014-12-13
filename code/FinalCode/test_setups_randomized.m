@@ -1,9 +1,9 @@
 %This script is used to compare the random network to the scale free network in 
 %the case of randomized interbank assets, without a regulator. It is based on the
 %test setup by the group of the previous year, now applied to a different bank generation
-%function.
+%function and having the plots in a different figure.
 
-% Faults vs net worth random network, randomized i
+% Faults vs net worth random network, randomized b
 clear all;
 E=100000; %External assets
 S=50000; %Shock size
@@ -36,7 +36,7 @@ end
 save('randomizedgammarand.mat','nFaults','Gamma','N','Runs')
 close(h);
 
-% Faults vs interbank assets random network, randomized i
+% Faults vs interbank assets random network, randomized b
 clear all;
 E=100000;
 S=50000;
@@ -72,11 +72,11 @@ end
 save('randomizedthetarand.mat','nFaults','Theta','N','Runs','Gamma','nGamma','nTheta')
 close(h);
 
-% Faults vs net worth preferential network, randomized i
+% Faults vs net worth preferential network, randomized b
 clear all;
 E=100000;
 S=50000;
-N=100;
+N=50;
 p=0.08; %Preferential attachment parameter
 theta=0.2;
 Gamma=0:0.005:0.1;
@@ -105,11 +105,11 @@ end
 save('randomizedgammapref.mat','nFaults','Gamma','N','Runs')
 close(h);
 
-% Faults vs interbank assets preferential network, randomized i
+% Faults vs interbank assets preferential network, randomized b
 clear all;
 E=100000;
 S=50000;
-N=100;
+N=50;
 p=0.08;
 Theta=0:0.025:0.5;
 Gamma=[0.01 0.03 0.05];
