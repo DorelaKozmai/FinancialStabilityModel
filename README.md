@@ -1,4 +1,4 @@
-# MATLAB Fall 2014 – Research Plan SHOCKSTERS
+﻿# MATLAB Fall 2014 – Research Plan SHOCKSTERS
 
 
 > * Group Name: SHOCKSTERS
@@ -16,17 +16,6 @@ In reaction to the G20’s call for better techniques to identify and model syst
 Building on the work of Nier et al. (2007), we represent a highly interconnected banking ecosystem using a simple random graph network model, namely the Erdös-Renyi model. The banking ecosystem consists of numerous banks, represented by a set of nodes N = {1, ...,n} and an n*n adjacency matrix g=[gij]i,j ∈ N ang gij∈{0,1} whereby the availability of an edge from node i to node j represents an interbank loan relationship. Each interbank loan is formed with probability p ∈ (0,1). 
 Further to the interbank lending dimension, each bank’s balance sheet is described by its external assets, its depositors and its equity funding.
 We aim to study the effects of financial shocks entering the financial system through the bank’s external assets and spreading through the banking network via the interbank loan edges.  
-As an extension of Nier et al. we aim to introduce different non-bank agents, namely (i) fully equity financed money market funds, i.e. not receiving any bank loans, but still lending to other banks, represented by nodes m=[mij] with mi ∈ {0,1} and mj ∈ {0} and (ii) direct lenders, lending directly to exogenous creditors (e.g. through peer-to-peer lending platforms), which are represented by nodes p=[pij] with pij ∈ {0}.    
-
-
-## Fundamental Questions
-
-*	Our principal aim is to replicate the simulation results of Nier et al. (2007), in particular modelling the default/equity, default/interconnectivity, deposit loss/equity etc. relationships.
-*	These relationships shall be compared to the results when different non-bank, risk absorbing agents are introduced, namely money market funds and direct lenders.
-
-## Expected Results
-*	We aim to draw policy implications from the macroprudential simulation results obtained from the above. In particular, we expect to find that the introduction of money market funds and direct lenders significantly increase financial stability in shock scenarios. As a result, financial regulation fostering disintermediation by introducing direct lending relationships and reducing the number of interbank loan edges should be further promoted.  
-
 
 ## References 
 
